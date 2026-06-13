@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import { JSDOM } from 'jsdom';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
@@ -157,5 +159,7 @@ const rawHtml = md.render(preprocessMarkdown(content));
 const styledHtml = applyTheme(rawHtml, themeId);
 const finalHtml = makeWeChatCompatible(styledHtml, themeId);
 
-writeFileSync('/tmp/md2wechat-output.html', finalHtml, 'utf-8');
+const outPath = join(tmpdir(), 'md2wechat-output.html');
+writeFileSync(outPath, finalHtml, 'utf-8');
+process.stderr.write(outPath);
 process.stdout.write(finalHtml);

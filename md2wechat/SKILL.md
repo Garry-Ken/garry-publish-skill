@@ -5,7 +5,7 @@ argument-hint: "<markdown-file> [theme]"
 arguments:
   - file
   - theme
-allowed-tools: Bash(node *), Bash(npm *), Bash(pbcopy), Bash(xclip *), Bash(xsel *), Read, Write
+allowed-tools: Bash(node *), Bash(npm *), Bash(pbcopy), Bash(xclip *), Bash(xsel *), Bash(clip), Bash(powershell *), Read, Write
 ---
 
 # Markdown → 微信公众号 HTML 转换
@@ -45,15 +45,7 @@ allowed-tools: Bash(node *), Bash(npm *), Bash(pbcopy), Bash(xclip *), Bash(xsel
 cd "${CLAUDE_SKILL_DIR}/scripts" && [ -d node_modules ] || npm install --silent
 ```
 
-3. 运行转换脚本：
-
-```bash
-node "${CLAUDE_SKILL_DIR}/scripts/convert.mjs" "<markdown-file-path>" "<theme-id>"
-```
-
-脚本会输出转换后的 HTML 到 stdout，同时写入 `/tmp/md2wechat-output.html`。
-
-4. 复制到系统剪贴板：
+3. 运行转换脚本并复制到系统剪贴板（根据平台选择命令）：
 
 ```bash
 # macOS
@@ -61,11 +53,19 @@ node "${CLAUDE_SKILL_DIR}/scripts/convert.mjs" "<file>" "<theme>" | pbcopy
 
 # Linux
 node "${CLAUDE_SKILL_DIR}/scripts/convert.mjs" "<file>" "<theme>" | xclip -selection clipboard
+
+# Windows (PowerShell)
+node "${CLAUDE_SKILL_DIR}/scripts/convert.mjs" "<file>" "<theme>" | clip
+
+# Windows (如果 clip 不可用)
+powershell -command "node '${CLAUDE_SKILL_DIR}/scripts/convert.mjs' '<file>' '<theme>' | Set-Clipboard"
 ```
 
-5. 告知用户：
+脚本输出 HTML 到 stdout（用于管道复制），同时将输出文件路径写入 stderr。
+
+4. 告知用户：
    - 已复制到剪贴板，可直接粘贴到公众号后台
-   - 同时保存了一份到 `/tmp/md2wechat-output.html`
+   - 脚本同时保存了一份 HTML 文件（路径从 stderr 获取）
    - 使用的主题名称
 
 ## 注意事项
